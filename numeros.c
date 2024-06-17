@@ -8,7 +8,7 @@ struct info
 {
     long a, b;
     int numDiv;
-    int r, s, mdc, mmc;
+    int r, s, mdc, mmc; // troque por long 
 };
 
 long mod (long a, long b)
@@ -26,6 +26,7 @@ long mod (long a, long b)
     return a - quociente * b;
 }
 
+/* V5 deve corrigir erro na funcao divide. Erro corrigido em numeros.cpp */
 long divide (long a, long b){ return (a < 0 ? (b < 0 ? (a / b) + 1 : (a / b) - 1) : a / b);}
 
 void mdcE (struct info* i)
@@ -63,7 +64,7 @@ void mdcE (struct info* i)
         ++i->numDiv;
     }
 
-    i->mdc = a;
+    i->mdc = a; // deve ser valor absoluto de a
     i->r = rAnt;
     i->s = sAnt;
 }
@@ -143,7 +144,7 @@ int main ()
     
     printf ("\n +====================ED=====================+\n");
     printf (" r = %d, s = %d\n", i.r, i.s);
-    printf (" x = %d + %dt e ", cof1X, cof2X, cof1Y, cof2Y);
+    printf (" x = %d + %dt e ", cof1X, cof2X);
     if (cof2Y < 0)
         printf ("y = %d + %dt\n", cof1Y, absoluto (cof2Y));
     else
