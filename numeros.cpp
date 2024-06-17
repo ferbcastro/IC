@@ -6,10 +6,7 @@ int64_t divide (int64_t a, int64_t b)
     return (a < 0 ? (b < 0 ? (a / b) + 1 : (a / b) - 1) : a / b);
 }
 
-int64_t mod (int64_t a, int64_t b)
-{
-    return a - divide (a, b) * b;
-}
+int64_t mod (int64_t a, int64_t b) {return a - divide (a, b) * b;}
 
 algebra::algebra (int64_t val1, int64_t val2) : a(val1), b(val2), numDiv(0){}
 
