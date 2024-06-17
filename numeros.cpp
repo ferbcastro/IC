@@ -1,4 +1,5 @@
 #include "numeros.hpp"
+#include "aux.hpp"
 
 int64_t divide (int64_t a, int64_t b)
 {
@@ -8,7 +9,15 @@ int64_t divide (int64_t a, int64_t b)
 
 int64_t mod (int64_t a, int64_t b) {return a - divide (a, b) * b;}
 
-algebra::algebra (int64_t val1, int64_t val2) : a(val1), b(val2), numDiv(0){}
+algebra::algebra () : numDiv(0){}
+
+void algebra::getNumbers ()
+{
+    std::cout << " a = ";
+    get (a);
+    std::cout << " b = ";
+    get (b);
+}
 
 void algebra::mdcE ()
 {
@@ -43,9 +52,8 @@ void algebra::mdcE ()
         bTemp = resto;
     }
 
-    Mdc = abs (aTemp);
-    r = rAnt;
-    s = sAnt;
+    if (aTemp < 0) {r = -rAnt; s = -sAnt; Mdc = -aTemp;}
+    else {r = rAnt; s = sAnt; Mdc = aTemp;}
 }
 
 void algebra::mmc () {Mmc = (abs(a) * abs(b)) / Mdc; ++numDiv;}
