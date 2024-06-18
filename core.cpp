@@ -1,17 +1,22 @@
 #include "numeros.hpp"
 #include "aux.hpp"
 #include <unistd.h>
+#include <vector>
+#include <tuple>
+
+using namespace std;
 
 unsigned char menu ()
 {
     unsigned char opcao;
 
-    std::cout << "\n +====================MENU====================+\n";
-    std::cout << " 1. Resolver equacao diofantina\n";
-    std::cout << " 2. Resolver congruencia linear\n";
-    std::cout << " 3. MDC & MMC\n";
-    std::cout << " +============================================+\n";
-    std::cout << " Opcao escolhida: ";
+    cout << "\n +====================MENU====================+\n";
+    cout << " 1. Resolver congruencia linear\n    Forma: aX \u2261 c(mod b)\n";
+    cout << " 2. Resolver equacao diofantina\n    Forma: aX + bY = c\n";
+    cout << " 3. Resolver sistema de congruencias lineares\n    Forma: aX \u2261 c(mod b) ...\n";
+    cout << " 4. MDC & MMC\n";
+    cout << " +============================================+\n";
+    cout << " Opcao escolhida: ";
     opcao = getchar() - '0';
 
     return opcao;
@@ -20,65 +25,110 @@ unsigned char menu ()
 int main ()
 {
     algebra nt;
-    int64_t c, t;
-    unsigned char opcao, i; 
+    int64_t t, solucao(0), produto(1);
+    unsigned char opcao, i;
     bool valida;
+    vector<tuple<int64_t, int64_t>> vet;
+    int qtd, j;
 
     opcao = menu ();
     if (opcao < 1 || opcao > 3) return 0;
-    nt.getNumbers ();
 
-    if (nt.a == 0 && nt.b == 0)
-    {
-        std::cout << " Entrada invalida" << std::endl;
-        return 0;
-    }
-
-    nt.mdcE ();
     switch (opcao) 
     {
         case 1:
-            std::cout << "vazio\n";
-            break;
         case 2:
-            std::cout << " c = ";
-            get (c);
-            nt.coefsEqDiofantina (c);
-            std::cout << std::endl << " +====================ED=====================+" << std::endl;
-            std::cout << " r = " << nt.r << ", s = " << nt.s << std::endl; 
+            nt.getNumbersEqD ();
+            nt.mdcE ();
+            nt.coefsEqDiofantina ();
 
-            std::cout << " x = " << nt.cof1X;
-            if (nt.cof2X < 0) std::cout << " - " << abs (nt.cof2X) << "t";
-            else std::cout << " + " << nt.cof2X << "t";
+            cout << endl << " +====================ED/CL=====================+" << endl;
+            cout << " r = " << nt.r << ", s = " << nt.s << endl;
+            cout << " x = " << nt.cof1X;
+            if (nt.cof2X < 0) cout << " - " << abs (nt.cof2X) << "t";
+            else cout << " + " << nt.cof2X << "t";
 
-            std::cout << std::endl << " y = " << nt.cof1Y;
-            if (nt.cof2Y < 0) std::cout << " + " << abs (nt.cof2Y) << "t";
-            else std::cout << " - " << nt.cof2Y << "t";
-            std::cout << " \n+===========================================+" << std::endl;
+            cout << endl << " y = " << nt.cof1Y;
+            if (nt.cof2Y < 0) cout << " + " << abs (nt.cof2Y) << "t";
+            else cout << " - " << nt.cof2Y << "t";
+            cout << "\n +==============================================+" << endl;
 
-            std::cout << std::endl << " Deseja inserir um valor de t?\n";
-            std::cout << " Opcao escolhida: ";
-            std::cin >> i;
-            if (i == 'S' || i == 's')
+            if (opcao == 2)
             {
-                std::cout << " t = ";
-                get (t);
-                std::cout << " x = " << nt.cof1X + nt.cof2X * t << std::endl;
-                std::cout << " y = " << nt.cof1Y - nt.cof2Y * t << "\n\n";
+                cout << " \nDeseja inserir um valor de t? (S/N)\n";
+                cout << " Opcao escolhida: ";
+                cin >> i;
+                if (i == 'S' || i == 's')
+                {
+                    cout << " t = ";
+                    get (t);
+                    cout << " x = " << nt.cof1X + nt.cof2X * t << endl;
+                    cout << " y = " << nt.cof1Y - nt.cof2Y * t << "\n\n";
+                }
             }
+            else
+            {
+                cout << "\n Deseja listar solucoes unicas? (S/N)\n";
+                cout << " Opcao escolhida: ";
+                cin >> i;
+                if (i == 'S' || i == 's')
+                {
+                    cout << "\n";
+                    for (j = 0; j < nt.Mdc; j++)
+                        cout << " x" << j << " = " << nt.cof1X + nt.cof2X * j << "\n";
+                    cout << "\n";
+                }
+            } 
+
             break;
         case 3:
-            std::cout << std::endl << " +====================MDC====================+" << std::endl;
-            std::cout << " mdc(" << nt.a << ", " << nt.b << ") = " << nt.Mdc << std::endl;
-            if (nt.numDiv == 1) std::cout << " " << nt.numDiv << " divisao" << std::endl;
-            else std::cout << " " << nt.numDiv << " divisoes " << std::endl;
-            std::cout << " +===========================================+" << std::endl;
+            cout << " Quantas equacoes deseja computar? Digite um numero: ";
+            cin >> qtd; 
+            
+            for (j = 0; j < qtd; j++)
+            {
+                nt.getNumbersEqD ();
+                nt.mdcE ();
+                cout << "\n";
+                if (!nt.verificaEqDiofantina (nt.c))
+                {
+                    cout << " Entrada invalida" << endl;
+                    exit (0);
+                }
+
+                if (nt.mdc (produto, nt.b / nt.Mdc) != 1) 
+                {
+                    cout << " Entrada invalida\n";
+                    break;
+                }
+                produto *= (nt.b / nt.Mdc);
+                vet.push_back (make_tuple (nt.r * nt.c / nt.Mdc, nt.b / nt.Mdc));
+            }
+
+            for (auto& it : vet)
+            {
+                nt.a = get<1>(it);
+                nt.b = produto / nt.a;
+                nt.mdcE ();
+                solucao += (get<0>(it) * nt.s * nt.b);
+            }
+
+            cout << "\n x = " << solucao << " + " << produto << "t\n\n";
+            break;
+        case 4:
+            nt.getNumbers ();
+            nt.mdcE ();
+            cout << endl << " +====================MDC====================+" << endl;
+            cout << " mdc(" << nt.a << ", " << nt.b << ") = " << nt.Mdc << endl;
+            if (nt.numDiv == 1) cout << " " << nt.numDiv << " divisao" << endl;
+            else cout << " " << nt.numDiv << " divisoes " << endl;
+            cout << " +===========================================+" << endl;
 
             nt.mmc ();
-            std::cout << std::endl << " +====================MMC====================+" << std::endl;
-            std::cout << " mmc(" << nt.a << ", " << nt.b << ") = " << nt.Mmc << std::endl;
-            std::cout << " " << nt.numDiv << " divisoes " << std::endl;
-            std::cout << " +===========================================+\n\n";
+            cout << endl << " +====================MMC====================+" << endl;
+            cout << " mmc(" << nt.a << ", " << nt.b << ") = " << nt.Mmc << endl;
+            cout << " " << nt.numDiv << " divisoes " << endl;
+            cout << " +===========================================+\n\n";
 
             break;
     }

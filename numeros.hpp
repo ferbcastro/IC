@@ -4,10 +4,6 @@
 #include <cstdint>
 #include <cmath>
 
-#define max(a, b) (a > b ? a : b)
-#define min(a, b) (a < b ? a : b)
-#define abs(a) (a < 0 ? -a : a)
-
 int64_t divide (int64_t a, int64_t b);
 
 int64_t mod (int64_t a, int64_t b);
@@ -15,7 +11,7 @@ int64_t mod (int64_t a, int64_t b);
 class algebra
 {
     public: 
-        int64_t a, b;
+        int64_t a, b, c;
         int64_t numDiv;
         int64_t Mdc, Mmc;
         int64_t r, s; 
@@ -24,10 +20,13 @@ class algebra
         algebra ();
         void getNumbers ();
         void mdcE ();
+        int64_t mdc (int64_t a, int64_t b);
         void mmc ();
-        void coefsEqDiofantina (int64_t c);
+        void coefsEqDiofantina ();
+        void getNumbersEqD ();
+        bool verificaEqDiofantina (int64_t c);
         ~algebra ();
     private:
-        bool verificaEqDiofantina (int64_t c);
+        int64_t mdcRec (int64_t a, int64_t b);
 };
 #endif
